@@ -495,8 +495,6 @@ obj/
 
 ## Environment Settings
 appsettings.Development.json
-appsettings.Production.json
-appsettings.local.json
 
 ## Logs
 *.log
