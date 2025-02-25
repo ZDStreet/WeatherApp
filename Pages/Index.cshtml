@@ -6,14 +6,74 @@
 
 <div class="text-center">
     <h1 class="display-4">Weather App</h1>
-    <form method="post">
-        <input type="text" name="Location" placeholder="Enter location" required />
-        <button type="submit">Get Weather</button>
+    <form method="post" id="weatherForm">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <input type="text" id="locationInput" class="form-control" asp-for="Location" placeholder="Enter location">
+        </div>
+        <button type="submit" style="display: none;">Get Weather</button>
     </form>
 
-    @if (Model.WeatherData != null)
-    {
-        <h2>Weather in @Model.WeatherData.Name</h2>
-        <p>Temperature: @Model.WeatherData.Main.Temp °C</p>
-    }
+    <div id="weatherResult">
+        @if (Model.WeatherData != null)
+        {
+            <h2>Weather in @Model.WeatherData.Name</h2>
+            <p>Temperature: @Model.WeatherData.Main?.Temp °C</p>
+        }
+        else
+        {
+            <p>Please enter a valid location.</p>
+        }
+    </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#locationInput").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: '?handler=LocationSuggestions',
+                        data: { term: request.term },
+                        success: function(data) {
+                            response(data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    // When a location is selected, submit the form via AJAX
+                    event.preventDefault();
+                    const selectedLocation = ui.item.value;
+                    $("#locationInput").val(selectedLocation);
+                    
+                    // Get the antiforgery token
+                    const token = $('input[name="__RequestVerificationToken"]').val();
+                    
+                    // Submit form via AJAX
+                    $.ajax({
+                        url: '',
+                        method: 'POST',
+                        data: {
+                            Location: selectedLocation,
+                            __RequestVerificationToken: token
+                        },
+                        success: function(response) {
+                            // Update the weather result div with the new content
+                            const weatherHtml = $(response).find('#weatherResult').html();
+                            $('#weatherResult').html(weatherHtml);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error fetching weather:', error);
+                            $('#weatherResult').html('<p>Error fetching weather data. Please try again.</p>');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

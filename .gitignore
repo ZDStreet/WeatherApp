@@ -482,3 +482,27 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+## .NET Core
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+.vs/
+.vscode/
+
+## Environment Settings
+appsettings.Development.json
+appsettings.Production.json
+appsettings.local.json
+
+## Logs
+*.log
+logs/
+
+## IDE
+.idea/
+*.swp
+*.swo
