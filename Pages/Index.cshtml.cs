@@ -4,6 +4,7 @@ using WeatherApp.Services;
 
 namespace WeatherApp.Pages
 {
+    [IgnoreAntiforgeryToken]
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
@@ -18,7 +19,7 @@ namespace WeatherApp.Pages
         [BindProperty]
         public required string Location { get; set; }
 
-        public WeatherData? WeatherData { get; set; } // Make WeatherData nullable
+        public WeatherData? WeatherData { get; set; } 
 
         public async Task OnPostAsync()
         {
@@ -27,13 +28,11 @@ namespace WeatherApp.Pages
                 WeatherData = await _weatherService.GetWeatherAsync(Location);
                 if (WeatherData == null)
                 {
-                    // Handle invalid city name
                     ModelState.AddModelError("Location", "Please enter a valid city name.");
                 }
             }
         }
 
-        [IgnoreAntiforgeryToken]
         public async Task<JsonResult> OnGetLocationSuggestions(string term)
         {
             if (string.IsNullOrEmpty(term))
