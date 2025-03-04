@@ -4,25 +4,25 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Weather App</h1>
-    <form method="post" id="weatherForm">
+<div class="text-center max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8">Weather App</h1>
+    <form method="post" id="weatherForm" class="mb-8">
         @Html.AntiForgeryToken()
-        <div class="form-group">
-            <input type="text" id="locationInput" class="form-control" asp-for="Location" placeholder="Enter location">
+        <div class="mb-4">
+            <input type="text" id="locationInput" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" asp-for="Location" placeholder="Enter location">
         </div>
-        <button type="submit" style="display: none;">Get Weather</button>
+        <button type="submit" class="hidden">Get Weather</button>
     </form>
 
-    <div id="weatherResult">
+    <div id="weatherResult" class="bg-white rounded-lg shadow-lg p-6">
         @if (Model.WeatherData != null)
         {
-            <h2>Weather in @Model.WeatherData.Name</h2>
-            <p>Temperature: @Model.WeatherData.Main?.Temp °C</p>
+            <h2 class="text-2xl font-semibold mb-4">Weather in @Model.WeatherData.Name</h2>
+            <p class="text-xl">Temperature: @Model.WeatherData.Main?.Temp °C</p>
         }
         else
         {
-            <p>Please enter a valid location.</p>
+            <p class="text-gray-600">Please enter a valid location.</p>
         }
     </div>
 </div>
@@ -46,15 +46,12 @@
                 },
                 minLength: 2,
                 select: function(event, ui) {
-                    // When a location is selected, submit the form via AJAX
                     event.preventDefault();
                     const selectedLocation = ui.item.value;
                     $("#locationInput").val(selectedLocation);
                     
-                    // Get the antiforgery token
                     const token = $('input[name="__RequestVerificationToken"]').val();
                     
-                    // Submit form via AJAX
                     $.ajax({
                         url: '',
                         method: 'POST',
@@ -63,13 +60,12 @@
                             __RequestVerificationToken: token
                         },
                         success: function(response) {
-                            // Update the weather result div with the new content
                             const weatherHtml = $(response).find('#weatherResult').html();
                             $('#weatherResult').html(weatherHtml);
                         },
                         error: function(xhr, status, error) {
                             console.error('Error fetching weather:', error);
-                            $('#weatherResult').html('<p>Error fetching weather data. Please try again.</p>');
+                            $('#weatherResult').html('<p class="text-red-600">Error fetching weather data. Please try again.</p>');
                         }
                     });
                 }
