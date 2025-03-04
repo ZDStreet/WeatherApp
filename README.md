@@ -13,4 +13,4 @@
 - ASP.NET Core
 - Razor Pages
 - jQuery
-- Bootstrap (Might change to tailwind)
+- Tailwind
